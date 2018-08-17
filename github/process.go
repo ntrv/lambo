@@ -3,8 +3,6 @@ package github
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/ntrv/lambo/lambo"
@@ -147,7 +145,5 @@ func (h Hook) runProcessContext(
 		json.Unmarshal(payload, &wa)
 		return fn(ctx, wa, req)
 	}
-	return events.APIGatewayProxyResponse{
-		StatusCode: http.StatusInternalServerError,
-	}, fmt.Errorf("")
+	return lambo.NewHTTPError("")
 }
