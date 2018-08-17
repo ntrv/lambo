@@ -7,19 +7,19 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-// HandlerFunc ... 
+// HandlerFunc ...
 type HandlerFunc func(context.Context, events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error)
 
 type Lambo struct {
 	middlewares []MiddlewareFunc
 }
 
-// New ... 
+// New ...
 func New() Lambo {
 	return Lambo{middlewares: []MiddlewareFunc{}}
 }
 
-// Run ... Execute 
+// Run ... Execute
 func (l Lambo) Run(handler HandlerFunc) {
 	lambda.Start(l.then(handler))
 }
