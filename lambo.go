@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/ntrv/lambo/github"
 	"github.com/ntrv/lambo/lambo"
 	gh "gopkg.in/go-playground/webhooks.v3/github"
@@ -15,6 +16,5 @@ func main() {
 
 	l := lambo.New()
 	l.Use(lambo.MiddlewareExample)
-	// l.Run(lambo.HandleEcho)
-	l.Run(hook.ParsePayloadHandler)
+	lambda.Start(l.Then(hook.ParsePayloadHandler))
 }
