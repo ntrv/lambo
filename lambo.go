@@ -11,7 +11,6 @@ func main() {
 	hook.RegisterEvents(github.Event{
 		EventName:     gh.PushEvent,
 		HandleProcess: lambo.HandlePushSample,
-		PostProcess:   lambo.PostProcessNothing,
 	})
 
 	l := lambo.New()

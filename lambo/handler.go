@@ -8,6 +8,8 @@ import (
 	gh "gopkg.in/go-playground/webhooks.v3/github"
 )
 
+type HandleProcessFunc func(context.Context, interface{}, events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error)
+
 // HandleEcho ... Just echo handler
 func HandleEcho(ctx context.Context, req events.APIGatewayProxyRequest) (
 	events.APIGatewayProxyResponse, error) {
@@ -18,14 +20,13 @@ func HandlePushSample(
 	ctx context.Context,
 	payload interface{},
 	req events.APIGatewayProxyRequest,
-)(events.APIGatewayProxyResponse, error) {
-	pl := payload.(gh.PushPayload)
+) (events.APIGatewayProxyResponse, error) {
+	pl, ok := payload.(gh.PushPayload)
+	if !ok {
+		return NewHTTPError("")
+	}
 	return events.APIGatewayProxyResponse{
 		StatusCode: http.StatusOK,
-		Body: pl.Commits[0].Message,
+		Body:       pl.Commits[0].Message,
 	}, nil
-}
-
-func PostProcessNothing(s string, req events.APIGatewayProxyRequest) error {
-	return nil
 }
