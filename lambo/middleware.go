@@ -15,8 +15,8 @@ func (l *Lambo) Use(mws ...MiddlewareFunc) {
 	l.middlewares = append(l.middlewares, mws...)
 }
 
-// then ... Make middleware nested and generate a handler to actually use
-func (l Lambo) then(h HandlerFunc) HandlerFunc {
+// Then ... Make middleware nested and generate a handler to actually use
+func (l Lambo) Then(h HandlerFunc) HandlerFunc {
 	for i := range l.middlewares {
 		h = l.middlewares[len(l.middlewares)-1-i](h)
 	}

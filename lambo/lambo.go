@@ -21,5 +21,5 @@ func New() Lambo {
 
 // Run ... Execute
 func (l Lambo) Run(handler HandlerFunc) {
-	lambda.Start(l.then(handler))
+	lambda.Start(l.Then(handler))
 }
