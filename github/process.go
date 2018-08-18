@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-xray-sdk-go/xray"
 	"github.com/ntrv/lambo/lambo"
 	gh "gopkg.in/go-playground/webhooks.v3/github"
 )
@@ -15,6 +16,11 @@ func (h Hook) runProcessContext(
 	fn lambo.HandleProcessFunc,
 	req events.APIGatewayProxyRequest,
 ) (events.APIGatewayProxyResponse, error) {
+
+	// Use AWS X-Ray
+	ctx, seg := xray.BeginSegment(ctx, "ProcessPayload")
+	defer seg.Close(nil)
+
 	payload := []byte(req.Body)
 	switch h.eventName {
 	case gh.CommitCommentEvent:

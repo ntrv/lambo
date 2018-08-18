@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-xray-sdk-go/xray"
 	gh "gopkg.in/go-playground/webhooks.v3/github"
 )
 
@@ -21,6 +22,11 @@ func HandlePushSample(
 	payload interface{},
 	req events.APIGatewayProxyRequest,
 ) (events.APIGatewayProxyResponse, error) {
+
+	// Use AWS X-Ray
+	ctx, seg := xray.BeginSegment(ctx, "HandlerPush")
+	defer seg.Close(nil)
+
 	pl, ok := payload.(gh.PushPayload)
 	if !ok {
 		return NewHTTPError(

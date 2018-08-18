@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-xray-sdk-go/xray"
 	"github.com/ntrv/lambo/lambo"
 )
 
@@ -18,6 +19,11 @@ func MiddlewareVerify(secret string) lambo.MiddlewareFunc {
 	return func(next lambo.HandlerFunc) lambo.HandlerFunc {
 		return func(ctx context.Context, req events.APIGatewayProxyRequest) (
 			events.APIGatewayProxyResponse, error) {
+
+			// Use AWS X-Ray
+			ctx, seg := xray.BeginSegment(ctx, "VerifySignature")
+			defer seg.Close(nil)
+
 			// Pick up GitHub Signature from header
 			// And remove "sha1=" from X-Hub-Signature
 			// See https://developer.github.com/webhooks/#delivery-headers
@@ -58,6 +64,9 @@ func MiddlewareVerify(secret string) lambo.MiddlewareFunc {
 func MiddlewareCheckMethod(next lambo.HandlerFunc) lambo.HandlerFunc {
 	return func(ctx context.Context, req events.APIGatewayProxyRequest) (
 		events.APIGatewayProxyResponse, error) {
+		ctx, seg := xray.BeginSegment(ctx, "CheckMethod")
+		defer seg.Close(nil)
+
 		if req.HTTPMethod != http.MethodPost {
 			return lambo.NewHTTPError(
 				http.StatusMethodNotAllowed,
