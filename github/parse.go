@@ -10,9 +10,6 @@ import (
 
 func (h *Hook) ParsePayloadHandler(ctx context.Context, req events.APIGatewayProxyRequest) (
 	events.APIGatewayProxyResponse, error) {
-	if req.HTTPMethod != "POST" {
-		return lambo.NewHTTPError("")
-	}
 
 	event := req.Headers["X-GitHub-Event"]
 	if len(event) == 0 {
