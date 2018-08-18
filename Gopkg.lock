@@ -20,14 +20,11 @@
     "aws/awsutil",
     "aws/client",
     "aws/client/metadata",
-    "aws/corehandlers",
     "aws/credentials",
-    "aws/ec2metadata",
     "aws/endpoints",
     "aws/request",
     "internal/sdkio",
     "internal/sdkrand",
-    "internal/sdkuri",
     "internal/shareddefaults"
   ]
   revision = "ca229c7730be9278527fbb287f5a26c91e328d86"
@@ -45,8 +42,8 @@
     "strategy/sampling",
     "xray"
   ]
-  revision = "32670489212454717deeafb8da5dbb1da0299749"
-  version = "v0.9.4"
+  revision = "9aa851be74b8ccb817f886c4c43cf8da3b0fc61e"
+  version = "v1.0.0-rc.5"
 
 [[projects]]
   name = "github.com/cihub/seelog"
@@ -83,6 +80,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "1951b6b44206f6325875793f7b50021803216d515be6b87150da3132ef70e45b"
+  inputs-digest = "807cc4e3171e8e607296b08fe9646569098f752820d8baeb5cbbbd79dede75ac"
   solver-name = "gps-cdcl"
   solver-version = 1
