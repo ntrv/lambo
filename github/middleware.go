@@ -5,13 +5,12 @@ import (
 	"crypto/hmac"
 	"crypto/sha1"
 	"encoding/hex"
-	"io/ioutil"
-	"strings"
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/ntrv/lambo/lambo"
-	"github.com/prometheus/prometheus/config"
 )
 
 // MiddlewareVerify ... Verify X-Hub-Signature and secret
@@ -27,21 +26,29 @@ func MiddlewareVerify(secret string) lambo.MiddlewareFunc {
 				"sha1=",
 			)
 			if len(signature) == 0 {
-				return lambo.NewHTTPError("Missing X-Hub-Signature required for HMAC verification")
+				return lambo.NewHTTPError(
+					http.StatusBadRequest,
+					"Missing X-Hub-Signature required for HMAC verification",
+				)
 			}
 
 			// Calculate hmac from HTTP body and secret key
-			mac := hmac.New(sha1.New, []byte(secret))
-			payload, err := ioutil.ReadAll(req.Body)
-			if err != nil || len(payload) == 0 {
-				return lambo.NewHTTPError("Issue reading Payload")
+			if len(req.Body) == 0 {
+				return lambo.NewHTTPError(
+					http.StatusNotAcceptable,
+					"Missing Body",
+				)
 			}
-			mac.Write(payload)
+			mac := hmac.New(sha1.New, []byte(secret))
+			mac.Write([]byte(req.Body))
 			expectedMac := hex.EncodeToString(mac.Sum(nil))
 
 			// Compare whether signature matches calculated value
 			if !hmac.Equal([]byte(signature), []byte(expectedMac)) {
-				return lambo.NewHTTPError("HMAC verification failed")
+				return lambo.NewHTTPError(
+					http.StatusForbidden,
+					"HMAC verification failed",
+				)
 			}
 			return next(ctx, req)
 		}
@@ -52,7 +59,13 @@ func MiddlewareCheckMethod(next lambo.HandlerFunc) lambo.HandlerFunc {
 	return func(ctx context.Context, req events.APIGatewayProxyRequest) (
 		events.APIGatewayProxyResponse, error) {
 		if req.HTTPMethod != http.MethodPost {
-			return lambo.NewHTTPError("")
+			return lambo.NewHTTPError(
+				http.StatusMethodNotAllowed,
+				fmt.Sprintf(
+					"Attempt made using following method is not allowed: %s",
+					req.HTTPMethod,
+				),
+			)
 		}
 		return next(ctx, req)
 	}

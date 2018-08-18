@@ -2,13 +2,12 @@ package lambo
 
 import (
 	"errors"
-	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
 )
 
-func NewHTTPError(msg string) (events.APIGatewayProxyResponse, error) {
+func NewHTTPError(code int, msg string) (events.APIGatewayProxyResponse, error) {
 	return events.APIGatewayProxyResponse{
-		StatusCode: http.StatusInternalServerError,
+		StatusCode: code,
 	}, errors.New(msg)
 }

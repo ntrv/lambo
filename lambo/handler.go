@@ -23,7 +23,10 @@ func HandlePushSample(
 ) (events.APIGatewayProxyResponse, error) {
 	pl, ok := payload.(gh.PushPayload)
 	if !ok {
-		return NewHTTPError("")
+		return NewHTTPError(
+			http.StatusInternalServerError,
+			"Failed to parse PushPayload",
+		)
 	}
 	return events.APIGatewayProxyResponse{
 		StatusCode: http.StatusOK,

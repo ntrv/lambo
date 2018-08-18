@@ -3,6 +3,7 @@ package github
 import (
 	"context"
 	"encoding/json"
+	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/ntrv/lambo/lambo"
@@ -145,5 +146,8 @@ func (h Hook) runProcessContext(
 		json.Unmarshal(payload, &wa)
 		return fn(ctx, wa, req)
 	}
-	return lambo.NewHTTPError("")
+	return lambo.NewHTTPError(
+		http.StatusInternalServerError,
+		"Ending GitHub Event",
+	)
 }
