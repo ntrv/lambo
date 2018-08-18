@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"io/ioutil"
 	"strings"
+	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/ntrv/lambo/lambo"
@@ -50,7 +51,7 @@ func MiddlewareVerify(secret string) lambo.MiddlewareFunc {
 func MiddlewareCheckMethod(next lambo.HandlerFunc) lambo.HandlerFunc {
 	return func(ctx context.Context, req events.APIGatewayProxyRequest) (
 		events.APIGatewayProxyResponse, error) {
-		if req.HTTPMethod != "POST" {
+		if req.HTTPMethod != http.MethodPost {
 			return lambo.NewHTTPError("")
 		}
 		return next(ctx, req)
